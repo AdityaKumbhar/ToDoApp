@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+		<tx:annotation-driven/>	
+	
+	<context:component-scan base-package="com"></context:component-scan>
+
+	<mvc:annotation-driven enable-matrix-variables="true" />
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/pages/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- data source -->
+
+	<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+		name="dataSource">
+
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/todomanager" />
+		<property name="username" value="root" />
+		<property name="password" value="Aditya@123" />
+
+	</bean>
+
+	<bean class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"
+		name="sessionFactory">
+		<!-- data source -->
+		<property name="dataSource" ref="dataSource"></property>
+
+		<!-- hibernate properties -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop><!-- hibernate.hbm2ddl.auto for creating 
+					automatic table in database -->
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+
+		<!-- annotated classes -->
+		<property name="annotatedClasses">
+			<list>
+				<value>com.entities.Todo</value>
+			</list>
+		</property>
+
+	</bean>
+
+	<!-- hibernate template -->
+	<bean class="org.springframework.orm.hibernate5.HibernateTemplate"
+		name="hibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+
+	</bean>
+
+	<bean class="org.springframework.orm.hibernate5.HibernateTransactionManager"
+		name="transactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+</beans>
